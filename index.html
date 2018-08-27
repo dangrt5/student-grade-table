@@ -8,44 +8,51 @@
     <meta name="viewport" content="initial-scale=1, user-scalable=no">
 </head>
 <body>
-<div class="">
-    <div class="">
-        <!-- only show this element when the isnt on mobile -->
-        <h1>Student Grade Table
-            <small>Grade Average : <span class="avgGrade"></span></small>
+
+<div class="container-fluid">
+    <div class="col-xs-12 col-sm-12 col-lg-12">
+        <!-- only show this element when it isn't on mobile -->
+        <h1 class="hidden-sm hidden-xs">Student Grade Table
+            <small class="pull-right">Grade Average : <span class="label label-default">0</span></small>
+            <hr/></hr/>
         </h1>
         <!-- only show this element when the user gets to a mobile version -->
-        <h3>Student Grade Table
-            <small>Grade Average : <span class="avgGrade"></span></small>
+        <h3 class="hidden-lg hidden-md">Student Grade Table
+            <small class="col-xs-12 text-right">Grade Average : <span class="label label-default">0</span></small>
+            <hr/></hr/>
         </h3>
     </div>
-    <div class="student-add-form">
+    <div class="col-xs-12 col-lg-4 col-lg-push-8">
         <h4>Add Student</h4>
-        <div>
-            <span>
-                <span class="glyphicon"></span>
+
+        <div class="form-group input-group">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-user"></span>
             </span>
-            <input type="text" class="" name="studentName" id="studentName" placeholder="Student Name">
+            <input type="text" class="form-control" name="studentName" id="studentName" placeholder="Student Name">
         </div>
-        <div class="">
-            <span class="">
-                <span class="glyphicon"></span>
+
+        <div class="form-group input-group">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-list-alt"></span>
             </span>
-            <input type="text" class="" name="course" id="course"
-                   placeholder="Student Course">
+            <input type="text" class="form-control" name="course" id="course" placeholder="Student Course">
         </div>
-        <div class="">
-            <span class="">
-                <span class="glyphicon"></span>
+
+        <div class="form-group input-group">
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-education"></span>
             </span>
-            <input type="text" class="" name="studentGrade" id="studentGrade"
-                   placeholder="Student Grade">
+            <input type="text" class="form-control" name="studentGrade" id="studentGrade" placeholder="Student Grade">
         </div>
-        <button type="button" class="" onclick="">Add</button>
-        <button type="button" class="" onclick="">Cancel</button>
+
+        <button type="button" class="btn btn-success" onclick="">Add</button>
+        <button type="button" class="btn btn-default" onclick="">Cancel</button>
+
     </div>
-    <div class="student-list-container">
-        <table class="student-list">
+
+    <div class="col-xs-12 col-lg-8 col-lg-pull-4">
+        <table class="table table-hover">
             <thead>
             <tr>
                 <th>Student Name</th>
@@ -61,4 +68,3 @@
 </div>
 </body>
 </html>
-
