@@ -42,12 +42,9 @@ function initializeApp(){
 function addClickHandlersToElements(){
   handleAddClicked();
   handleCancelClick();
-  $("tbody").on("click", "td button", function() {
-    var currentDeleteButtonIndex = $(this).closest("tr").index();
-    studentArray.splice(currentDeleteButtonIndex, 1)
-    $(this).closest("tr").remove();
-    renderGradeAverage(calculateGradeAverage(studentArray));
-  })
+  $("tbody").on("click", "td button", handleDeleteClick);
+  handleGatherDataClick();
+
 }
 
 /***************************************************************************************************
@@ -67,6 +64,37 @@ function handleAddClicked(){
  */
 function handleCancelClick(){
   $(".btn-default").click(clearAddStudentFormInputs);
+}
+
+function handleDeleteClick() {
+  var currentDeleteButtonIndex = $(this).closest("tr").index();
+  studentArray.splice(currentDeleteButtonIndex, 1)
+  $(this).closest("tr").remove();
+  renderGradeAverage(calculateGradeAverage(studentArray));
+}
+
+function handleGatherDataClick() {
+  $(".btn-info").click(getDataFromServer);
+}
+
+function getDataFromServer() {
+  var studentInfoConfig = {
+    url: "http://s-apis.learningfuze.com/sgt/get",
+    method: "POST",
+    dataType: "json",
+    "data": {
+      "api_key": "nvSIsRsYCc"
+    },
+    success: function(result) {
+      var studentData = result.data;
+      console.log(studentData);
+      for(var i = 0; i < studentData.length; i++) {
+        studentArray.push(studentData[i]);
+        updateStudentList(studentData[i]);
+      }
+    }
+  }
+  $.ajax(studentInfoConfig);
 }
 /***************************************************************************************************
  * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
@@ -101,10 +129,17 @@ function clearAddStudentFormInputs(){
  */
 function renderStudentOnDom(studentObj){
   $("<tr>").appendTo("tbody");
-  $("<td>" + studentObj.name + "</td>").appendTo("tbody tr:last-child");
-  $("<td>" + studentObj.course + "</td>").appendTo("tbody tr:last-child");
-  $("<td>" + studentObj.grade + "</td>").appendTo("tbody tr:last-child");
-  $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>").appendTo("tbody tr:last-child");
+
+  var lastRowCreated = $("tbody tr:last-child");
+  var newStudentName = $("<td>" + studentObj.name + "</td>");
+  var newStudentCourse = $("<td>" + studentObj.course + "</td>");
+  var newStudentGrade = $("<td>" + studentObj.grade + "</td>");
+  var deleteButton = $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>");
+
+  newStudentName.appendTo(lastRowCreated);
+  newStudentCourse.appendTo(lastRowCreated);
+  newStudentGrade.appendTo(lastRowCreated);
+  deleteButton.appendTo(lastRowCreated);
 }
 
 /***************************************************************************************************
