@@ -136,10 +136,12 @@ function renderStudentOnDom(studentObj){
   var newStudentGrade = $("<td>" + studentObj.grade + "</td>");
   var deleteButton = $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>");
 
-  newStudentName.appendTo(lastRowCreated);
-  newStudentCourse.appendTo(lastRowCreated);
-  newStudentGrade.appendTo(lastRowCreated);
-  deleteButton.appendTo(lastRowCreated);
+  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, deleteButton);
+
+  // newStudentName.appendTo(lastRowCreated);
+  // newStudentCourse.appendTo(lastRowCreated);
+  // newStudentGrade.appendTo(lastRowCreated);
+  // deleteButton.appendTo(lastRowCreated);
 }
 
 /***************************************************************************************************
