@@ -75,7 +75,7 @@ function handleCancelClick(){
  * @calls clearAddStudentFormInputs, updateStudentList
  */
 function addStudent(){
-  if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") { 
+  if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
     return;
   }
   var newStudentInfo = {};
