@@ -42,6 +42,12 @@ function initializeApp(){
 function addClickHandlersToElements(){
   handleAddClicked();
   handleCancelClick();
+  $("tbody").on("click", "td button", function() {
+    var currentDeleteButtonIndex = $(this).closest("tr").index();
+    studentArray.splice(currentDeleteButtonIndex, 1)
+    $(this).closest("tr").remove();
+    renderGradeAverage(calculateGradeAverage(studentArray));
+  })
 }
 
 /***************************************************************************************************
@@ -69,10 +75,13 @@ function handleCancelClick(){
  * @calls clearAddStudentFormInputs, updateStudentList
  */
 function addStudent(){
+  if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") { 
+    return;
+  }
   var newStudentInfo = {};
   newStudentInfo.name = $("#studentName").val();
   newStudentInfo.course = $("#course").val();
-  newStudentInfo.grade = parseFloat($("#studentGrade").val());
+  newStudentInfo.grade = $("#studentGrade").val();
   studentArray.push(newStudentInfo);
   clearAddStudentFormInputs();
   updateStudentList(newStudentInfo);
@@ -96,7 +105,6 @@ function renderStudentOnDom(studentObj){
   $("<td>" + studentObj.course + "</td>").appendTo("tbody tr:last-child");
   $("<td>" + studentObj.grade + "</td>").appendTo("tbody tr:last-child");
   $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>").appendTo("tbody tr:last-child");
-
 }
 
 /***************************************************************************************************
@@ -115,11 +123,15 @@ function updateStudentList(students){
  * @returns {number}
  */
 function calculateGradeAverage(arrayStudents){
+  if(arrayStudents.length === 0) {
+    return 0;
+  }
   var averageTotalGrade = 0;
   for(var i = 0; i < arrayStudents.length; i++) {
-    averageTotalGrade += arrayStudents[i].grade;
-  } averageTotalGrade = averageTotalGrade / arrayStudents.length;
-    return averageTotalGrade;
+    averageTotalGrade += parseFloat(arrayStudents[i].grade);
+  }
+ averageTotalGrade = (averageTotalGrade / arrayStudents.length).toFixed(0);
+ return averageTotalGrade;
 }
 /***************************************************************************************************
  * renderGradeAverage - updates the on-page grade average
