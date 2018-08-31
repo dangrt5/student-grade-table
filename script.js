@@ -31,6 +31,7 @@ var studentArray = [];
 */
 function initializeApp(){
   addClickHandlersToElements();
+  getDataFromServer();
 }
 
 /***************************************************************************************************
@@ -68,9 +69,11 @@ function handleCancelClick(){
 
 function handleDeleteClick() {
   var currentDeleteButtonIndex = $(this).closest("tr").index();
+  var currentStudent = studentArray[currentDeleteButtonIndex];
   studentArray.splice(currentDeleteButtonIndex, 1)
   $(this).closest("tr").remove();
   renderGradeAverage(calculateGradeAverage(studentArray));
+  deleteStudentDataOnServer(currentStudent)
 }
 
 function handleGatherDataClick() {
@@ -96,6 +99,55 @@ function getDataFromServer() {
   }
   $.ajax(studentInfoConfig);
 }
+
+function postStudentDataToServer(student) {
+  var serverConfiguration = {
+    url: "http://s-apis.learningfuze.com/sgt/create",
+    method: "POST",
+    dataType: "json",
+    "data": {
+      "api_key": "nvSIsRsYCc",
+      "name": student.name,
+      "course": student.course,
+      "grade": student.grade
+    },
+    success: function(result) {
+      var successResult = result;
+      if(!result.success) {
+        console.log(result.errors)
+        return;
+      }
+      console.log(result.success);
+      var studentIDNumber = successResult.new_id;
+      studentArray[studentArray.length-1].id = studentIDNumber;
+    },
+  }
+  $.ajax(serverConfiguration);
+};
+
+function deleteStudentDataOnServer(selectedStudent) {
+  var serverConfiguration = {
+    url: "http://s-apis.learningfuze.com/sgt/delete",
+    method: "POST",
+    dataType: "json",
+    "data": {
+      "api_key": "nvSIsRsYCc",
+      "student_id": selectedStudent.id
+    },
+    success: function(resultData) {
+      var result = resultData;
+      if(!result.success) {
+        console.log(result.errors);
+        return;
+      } console.log(result.success)
+    },
+    error: function(result, errorMessage, error) {
+      console.log(result, errorMessage, error);
+
+    },
+  }
+  $.ajax(serverConfiguration);
+}
 /***************************************************************************************************
  * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
  * @param {undefined} none
@@ -113,6 +165,7 @@ function addStudent(){
   studentArray.push(newStudentInfo);
   clearAddStudentFormInputs();
   updateStudentList(newStudentInfo);
+  postStudentDataToServer(newStudentInfo);
 }
 /***************************************************************************************************
  * clearAddStudentForm - clears out the form values based on inputIds variable
