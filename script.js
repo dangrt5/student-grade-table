@@ -84,7 +84,7 @@ function getDataFromServer() {
 function postStudentDataToServer(student) {
   var serverConfiguration = {
     url: "http://s-apis.learningfuze.com/sgt/create",
-    method: "GET",
+    method: "POST",
     dataType: "json",
     "data": {
       "api_key": "nvSIsRsYCc",
