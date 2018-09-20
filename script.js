@@ -1,11 +1,38 @@
+/* information about jsdocs:
+* param: http://usejsdoc.org/tags-param.html#examples
+* returns: http://usejsdoc.org/tags-returns.html
+*
+/**
+ * Listen for the document to load and initialize the application
+ */
+
 $(document).ready(initializeApp);
 
+
+/**
+ * Define all global variables here.
+ */
+
 var studentArray = [];
+
+/***************************************************************************************************
+* initializeApp
+* @param {undefined} none
+* @returns {none}
+* initializes the application, including adding click handlers and pulling in any data from the server, in later versions
+*/
 
 function initializeApp(){
   addClickHandlersToElements();
   getDataFromServer();
 }
+
+/***************************************************************************************************
+* addClickHandlerstoElements
+* @param {undefined}
+* @returns  {undefined}
+* single function that contains all of the event handlers
+*/
 
 function addClickHandlersToElements(){
   handleAddClicked();
@@ -14,13 +41,35 @@ function addClickHandlersToElements(){
   handleGatherDataClick();
 }
 
+/***************************************************************************************************
+ * handleAddClicked - Event Handler when user clicks the add button
+ * @param {object} event  The event object from the click
+ * @return:
+       none
+ */
+
 function handleAddClicked(){
   $(".btn-success").click(addStudent);
 }
 
+/***************************************************************************************************
+ * handleCancelClicked - Event Handler when user clicks the cancel button, should clear out student form
+ * @param: {undefined} none
+ * @returns: {undefined} none
+ * @calls: clearAddStudentFormInputs
+ */
+
+
 function handleCancelClick(){
   $(".btn-default").click(clearAddStudentFormInputs);
 }
+
+/***************************************************************************************************
+ * handleDeleteClicked - Event Handler when user clicks the delete button, should remove the selected student from the grade table
+ * @param: {undefined} none
+ * @returns: {undefined} none
+ * @calls: rednerGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
+ */
 
 function handleDeleteClick() {
   var thisDeleteButton = $(this);
@@ -32,9 +81,24 @@ function handleDeleteClick() {
   deleteStudentDataOnServer(currentStudent)
 }
 
+/**************************************************************************************************
+ * handleGatherDataClick - Event Handler when user clicks the Get Student Data button, should retrieve student information from the server.
+ * @param: {undefined} none
+ * @returns: {undefined} none
+ * @calls: getDataFromServer
+ */
+
 function handleGatherDataClick() {
   $(".btn-info").click(getDataFromServer);
 }
+
+/**************************************************************************************************
+ * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
+ * @param {undefined} none
+ * @return undefined
+ * @calls clearAddStudentFormInputs, updateStudentList, postStudentDataToServer
+ */
+
 
 function addStudent(){
   if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
@@ -49,6 +113,11 @@ function addStudent(){
   updateStudentList(newStudentInfo);
   postStudentDataToServer(newStudentInfo);
 }
+
+/**************************************************************************************************
+ * clearAddStudentFormInputs - clears the form inputs
+ * @param {undefined} none
+ */
 
 function clearAddStudentFormInputs(){
   $("#studentName").val("");
