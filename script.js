@@ -37,7 +37,7 @@ function initializeApp(){
 function addClickHandlersToElements(){
   handleAddClicked();
   handleCancelClick();
-  $("tbody").on("click", "td button", handleDeleteClick);
+  $("tbody").on("click", "td .btn-danger", handleDeleteClick);
   handleGatherDataClick();
 }
 
@@ -216,12 +216,38 @@ function renderStudentOnDom(studentObj){
   $("<tr>").appendTo("tbody");
 
   var lastRowCreated = $("tbody tr:last-child");
-  var newStudentName = $("<td>" + studentObj.name + "</td>");
-  var newStudentCourse = $("<td>" + studentObj.course + "</td>");
-  var newStudentGrade = $("<td>" + studentObj.grade + "</td>");
-  var deleteButton = $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>");
 
-  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, deleteButton);
+  var newStudentName = $("<td>", {
+    text: studentObj.name
+  });
+
+  var newStudentCourse = $("<td>", {
+    text: studentObj.course
+  });
+
+  var newStudentGrade = $("<td>", {
+    text: studentObj.grade
+  });
+
+  var tableButton1 = $("<td>");
+
+  var deleteButton = $("<button>", {
+    class: "btn btn-danger",
+    text: "Delete"
+  });
+
+  var tableButton2 = $("<td>");
+
+  var updateButton = $("<button>", {
+    class: "btn btn-warning",
+    text: "Update"
+  });
+
+  var studentOptions = $("<td>");
+
+  tableButton1.append(deleteButton);
+  tableButton2.append(updateButton);
+  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
 }
 
 function updateStudentList(students){
