@@ -38,6 +38,7 @@ function addClickHandlersToElements(){
   handleAddClicked();
   handleCancelClick();
   $("tbody").on("click", "td .btn-danger", handleDeleteClick);
+  $("tbody").on("click", "td .btn-warning", handleUpdateClick);
   handleGatherDataClick();
 }
 
@@ -79,6 +80,26 @@ function handleDeleteClick() {
   $(this).closest("tr").remove();
   renderGradeAverage(calculateGradeAverage(studentArray));
   deleteStudentDataOnServer(currentStudent)
+}
+
+/**************************************************************************************************
+ * handleUpdateClicked - Event Handler when user clicks the update button, should edit student information
+ * @param: {undefined} none
+ * @returns: {undefined} none
+ * @calls:
+ */
+
+function handleUpdateClick() {
+  var thisUpdateButton = $(this);
+  var thisRowIndex = thisUpdateButton.closest("tr").index();
+  var currentStudent = studentArray[thisRowIndex];
+
+  $(".update-student #studentName").attr("value", currentStudent.name);
+  $(".update-student #course").attr("value", currentStudent.course);
+  $(".update-student #studentGrade").attr("value", currentStudent.grade);
+
+  $("#updateModal").modal("show")
+
 }
 
 /**************************************************************************************************
