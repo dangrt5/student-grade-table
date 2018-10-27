@@ -8,7 +8,6 @@
 
 $(document).ready(initializeApp);
 
-
 /**
  * Define all global variables here.
  */
@@ -22,7 +21,7 @@ var studentArray = [];
 * initializes the application, including adding click handlers and pulling in any data from the server, in later versions
 */
 
-function initializeApp(){
+function initializeApp() {
   addClickHandlersToElements();
   getDataFromServer();
 }
@@ -34,7 +33,7 @@ function initializeApp(){
 * single function that contains all of the event handlers
 */
 
-function addClickHandlersToElements(){
+function addClickHandlersToElements() {
   handleAddClicked();
   handleCancelClick();
   $("tbody").on("click", "td .btn-danger", handleDeleteClick);
@@ -47,8 +46,8 @@ function addClickHandlersToElements(){
  * @return {none}
  */
 
-function handleAddClicked(){
-  $(".btn-success").click(addStudent);
+function handleAddClicked() {
+  $(".add-button").click(addStudent);
 }
 
 /***************************************************************************************************
@@ -58,9 +57,8 @@ function handleAddClicked(){
  * @calls: clearAddStudentFormInputs
  */
 
-
-function handleCancelClick(){
-  $(".btn-default").click(clearAddStudentFormInputs);
+function handleCancelClick() {
+  $(".clear-button").click(clearAddStudentFormInputs);
 }
 
 /***************************************************************************************************
@@ -76,12 +74,12 @@ function handleDeleteClick() {
   var currentStudent = studentArray[thisRowIndex];
 
   $("#deleteModal .modal-title").text(`Confirm Delete: ${currentStudent.name}`);
-  $("#deleteModal #studentName").val(currentStudent.name);
-  $("#deleteModal #course").val(currentStudent.course);
-  $("#deleteModal #studentGrade").val(currentStudent.grade);
+  $("#deleteModal .student-name").val(currentStudent.name);
+  $("#deleteModal .course").val(currentStudent.course);
+  $("#deleteModal .grade").val(currentStudent.grade);
 
-  $("#deleteModal .btn-success").off();
-  $("#deleteModal .btn-success").click(() => confirmDeleteClick(currentStudent, thisDeleteButton, thisRowIndex));
+  $(".delete-button").off();
+  $(".delete-button").click(() => confirmDeleteClick(currentStudent, thisDeleteButton, thisRowIndex));
   $("#deleteModal").modal("show");
 
 }
@@ -113,12 +111,12 @@ function handleUpdateClick() {
   var currentStudent = studentArray[thisRowIndex];
 
   $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
-  $("#updateModal #studentName").attr("value", currentStudent.name);
-  $("#updateModal #course").attr("value", currentStudent.course);
-  $("#updateModal #studentGrade").attr("value", currentStudent.grade);
+  $("#updateModal .student-name").attr("value", currentStudent.name);
+  $("#updateModal .course").attr("value", currentStudent.course);
+  $("#updateModal .grade").attr("value", currentStudent.grade);
 
-  $("#updateModal .btn-success").off();
-  $("#updateModal .btn-success").click(() => confirmUpdateClick(currentStudent, thisRowIndex));
+  $(".update-button").off();
+  $(".update-button").click(() => confirmUpdateClick(currentStudent, thisRowIndex));
 
   $("#updateModal").modal("show")
 
@@ -132,9 +130,9 @@ function handleUpdateClick() {
  */
 
 function confirmUpdateClick(student, index) {
-  studentArray[index].name = $("#updateModal #studentName").val();
-  studentArray[index].course = $("#updateModal #course").val();
-  studentArray[index].grade = $("#updateModal #studentGrade").val();
+  studentArray[index].name = $("#updateModal .student-name").val();
+  studentArray[index].course = $("#updateModal .course").val();
+  studentArray[index].grade = $("#updateModal .grade").val();
   renderGradeAverage(calculateGradeAverage(studentArray));
   updateStudentDataOnServer(studentArray[index]);
 }
@@ -146,9 +144,8 @@ function confirmUpdateClick(student, index) {
  * @calls clearAddStudentFormInputs, updateStudentList, postStudentDataToServer
  */
 
-
-function addStudent(){
-  if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
+function addStudent() {
+  if ($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
     return;
   }
   var newStudentInfo = {};
@@ -166,7 +163,7 @@ function addStudent(){
  * @param {undefined} none
  */
 
-function clearAddStudentFormInputs(){
+function clearAddStudentFormInputs() {
   $("#studentName").val("");
   $("#course").val("");
   $("#studentGrade").val("");
@@ -184,7 +181,7 @@ function getDataFromServer() {
       studentArray = [];
       $("tbody").empty();
       var studentData = result.data;
-      for(var i = 0; i < studentData.length; i++) {
+      for (var i = 0; i < studentData.length; i++) {
         studentArray.push(studentData[i]);
         updateStudentList(studentData[i]);
       }
@@ -204,18 +201,18 @@ function postStudentDataToServer(student) {
     method: "GET",
     data: {
       action: "insert",
-      name : student.name,
-      course : student.course,
-      grade : student.grade,
+      name: student.name,
+      course: student.course,
+      grade: student.grade
     },
     dataType: "json",
     success: function(result) {
-      studentArray[studentArray.length-1].id = result.id;
+      studentArray[studentArray.length - 1].id = result.id;
       getDataFromServer();
     },
     error: function(error) {
       var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
-      $(".modal-body h1").text(errorMessage);
+      $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
   }
@@ -236,7 +233,7 @@ function deleteStudentDataOnServer(selectedStudent) {
     },
     error: function(error) {
       var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
-      $(".modal-body h1").text(errorMessage);
+      $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
   }
@@ -260,29 +257,23 @@ function updateStudentDataOnServer(student) {
     },
     error: function(error) {
       var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
-      $(".modal-body h1").text(errorMessage);
+      $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
   }
   $.ajax(serverConfiguration);
 }
 
-function renderStudentOnDom(studentObj){
+function renderStudentOnDom(studentObj) {
   $("<tr>").appendTo("tbody");
 
   var lastRowCreated = $("tbody tr:last-child");
 
-  var newStudentName = $("<td>", {
-    text: studentObj.name
-  });
+  var newStudentName = $("<td>", {text: studentObj.name});
 
-  var newStudentCourse = $("<td>", {
-    text: studentObj.course
-  });
+  var newStudentCourse = $("<td>", {text: studentObj.course});
 
-  var newStudentGrade = $("<td>", {
-    text: studentObj.grade
-  });
+  var newStudentGrade = $("<td>", {text: studentObj.grade});
 
   var tableButton1 = $("<td>");
 
@@ -298,30 +289,28 @@ function renderStudentOnDom(studentObj){
     text: "Update"
   });
 
-  var studentOptions = $("<td>");
-
   tableButton1.append(updateButton);
   tableButton2.append(deleteButton);
   lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
 }
 
-function updateStudentList(students){
+function updateStudentList(students) {
   renderStudentOnDom(students);
   renderGradeAverage(calculateGradeAverage(studentArray));
 }
 
-function calculateGradeAverage(arrayStudents){
-  if(arrayStudents.length === 0) {
+function calculateGradeAverage(arrayStudents) {
+  if (arrayStudents.length === 0) {
     return 0;
   }
   var averageTotalGrade = 0;
-  for(var i = 0; i < arrayStudents.length; i++) {
+  for (var i = 0; i < arrayStudents.length; i++) {
     averageTotalGrade += parseFloat(arrayStudents[i].grade);
   }
- averageTotalGrade = (averageTotalGrade / arrayStudents.length).toFixed(0);
- return averageTotalGrade;
+  averageTotalGrade = (averageTotalGrade / arrayStudents.length).toFixed(0);
+  return averageTotalGrade;
 }
 
-function renderGradeAverage(averageNumber){
+function renderGradeAverage(averageNumber) {
   $(".label-default").text(averageNumber);
 }
