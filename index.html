@@ -52,7 +52,6 @@
 
       <button type="button" class="btn btn-success">Add</button>
       <button type="button" class="btn btn-default">Cancel</button>
-      <button type="button" class="btn btn-info">Get Data from Server</button>
 
     </div>
 
@@ -77,7 +76,7 @@
 
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title text-left">Edit Student</h4>
+            <h4 class="modal-title text-left"></h4>
           </div>
 
           <div class="update-student modal-body">
@@ -111,6 +110,49 @@
         </div>
       </div>
     </div>
+    <!-- Update Modal End -->
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel">
+      <div class="modal-dialog " role="document">
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title text-left"></h4>
+          </div>
+
+          <div class="update-student modal-body">
+            
+            <div class="form-group input-group">
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-user"></span>
+              </span>
+              <input type="text" class="form-control" name="studentName" id="studentName" placeholder="Student Name" disabled>
+            </div>
+
+            <div class="form-group input-group">
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-list-alt"></span>
+              </span>
+              <input type="text" class="form-control" name="course" id="course" placeholder="Student Course" disabled>
+            </div>
+
+            <div class="form-group input-group">
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-education"></span>
+              </span>
+              <input type="text" class="form-control" name="studentGrade" id="studentGrade" placeholder="Student Grade" disabled>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success" data-dismiss="modal">Confirm</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Delete Modal End -->
 
 
     <!-- Error Modal -->
@@ -126,6 +168,8 @@
         </div>
       </div>
     </div>
+    <!-- Error Modal End -->
+
 
 </div>
 </body>
