@@ -1,5 +1,9 @@
 <?php
 
+if(empty($_GET["name"]) || empty($_GET["course"]) || empty($_GET["grade"])) {
+  $output["errors"] = "Insert Failed";
+}
+
 //check if you have all the data you need from the client-side call.
 //if not, add an appropriate error to errors
 
