@@ -8,7 +8,6 @@
 
 $(document).ready(initializeApp);
 
-
 /**
  * Define all global variables here.
  */
@@ -22,7 +21,7 @@ var studentArray = [];
 * initializes the application, including adding click handlers and pulling in any data from the server, in later versions
 */
 
-function initializeApp(){
+function initializeApp() {
   addClickHandlersToElements();
   getDataFromServer();
 }
@@ -30,66 +29,112 @@ function initializeApp(){
 /***************************************************************************************************
 * addClickHandlerstoElements
 * @param {undefined}
-* @returns  {undefined}
+* @returns {undefined}
 * single function that contains all of the event handlers
 */
 
-function addClickHandlersToElements(){
+function addClickHandlersToElements() {
   handleAddClicked();
   handleCancelClick();
-  $("tbody").on("click", "td button", handleDeleteClick);
-  handleGatherDataClick();
+  $("tbody").on("click", "td .btn-danger", handleDeleteClick);
+  $("tbody").on("click", "td .btn-warning", handleUpdateClick);
 }
 
 /***************************************************************************************************
  * handleAddClicked - Event Handler when user clicks the add button
  * @param {object} event  The event object from the click
- * @return:
-       none
+ * @return {none}
  */
 
-function handleAddClicked(){
-  $(".btn-success").click(addStudent);
+function handleAddClicked() {
+  $(".add-button").click(addStudent);
 }
 
 /***************************************************************************************************
  * handleCancelClicked - Event Handler when user clicks the cancel button, should clear out student form
- * @param: {undefined} none
- * @returns: {undefined} none
+ * @param {undefined} none
+ * @returns {undefined} none
  * @calls: clearAddStudentFormInputs
  */
 
-
-function handleCancelClick(){
-  $(".btn-default").click(clearAddStudentFormInputs);
+function handleCancelClick() {
+  $(".clear-button").click(clearAddStudentFormInputs);
 }
 
 /***************************************************************************************************
- * handleDeleteClicked - Event Handler when user clicks the delete button, should remove the selected student from the grade table
- * @param: {undefined} none
- * @returns: {undefined} none
- * @calls: rednerGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
+ * handleDeleteClicked - Event Handler when user clicks the delete button, should open the confirmation modal
+ * @param {undefined} none
+ * @returns {undefined}
+ * @calls {none}
  */
 
 function handleDeleteClick() {
   var thisDeleteButton = $(this);
   var thisRowIndex = $(this).closest("tr").index();
   var currentStudent = studentArray[thisRowIndex];
-  studentArray.splice(thisRowIndex, 1)
-  $(this).closest("tr").remove();
-  renderGradeAverage(calculateGradeAverage(studentArray));
-  deleteStudentDataOnServer(currentStudent)
+
+  $("#deleteModal .modal-title").text(`Confirm Delete: ${currentStudent.name}`);
+  $("#deleteModal .student-name").val(currentStudent.name);
+  $("#deleteModal .course").val(currentStudent.course);
+  $("#deleteModal .grade").val(currentStudent.grade);
+
+  $(".delete-button").off();
+  $(".delete-button").click(() => confirmDeleteClick(currentStudent, thisDeleteButton, thisRowIndex));
+  $("#deleteModal").modal("show");
+
 }
 
 /**************************************************************************************************
- * handleGatherDataClick - Event Handler when user clicks the Get Student Data button, should retrieve student information from the server.
- * @param: {undefined} none
+ * confirmDeleteClick - Event Handler when user clicks the confirm button, should remove the selected student from the grade table
+ * @param: student, row, index
  * @returns: {undefined} none
- * @calls: getDataFromServer
+ * @calls: renderGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
  */
 
-function handleGatherDataClick() {
-  $(".btn-info").click(getDataFromServer);
+function confirmDeleteClick(student, row, index) {
+  studentArray.splice(index, 1);
+  row.closest("tr").remove();
+  renderGradeAverage(calculateGradeAverage(studentArray));
+  deleteStudentDataOnServer(student);
+}
+
+/**************************************************************************************************
+ * handleUpdateClicked - Event Handler when user clicks the update button, should edit student information
+ * @param: {undefined} none
+ * @returns: {undefined} none
+ * @calls:
+ */
+
+function handleUpdateClick() {
+  var thisUpdateButton = $(this);
+  var thisRowIndex = thisUpdateButton.closest("tr").index();
+  var currentStudent = studentArray[thisRowIndex];
+
+  $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
+  $("#updateModal .student-name").attr("value", currentStudent.name);
+  $("#updateModal .course").attr("value", currentStudent.course);
+  $("#updateModal .grade").attr("value", currentStudent.grade);
+
+  $(".update-button").off();
+  $(".update-button").click(() => confirmUpdateClick(currentStudent, thisRowIndex));
+
+  $("#updateModal").modal("show")
+
+}
+
+/**************************************************************************************************
+ * confirmUpdateClick - Event Handler when user clicks the confirm button, should update the selected student from the grade table
+ * @param: student, row, index
+ * @returns: {undefined} none
+ * @calls: renderGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
+ */
+
+function confirmUpdateClick(student, index) {
+  studentArray[index].name = $("#updateModal .student-name").val();
+  studentArray[index].course = $("#updateModal .course").val();
+  studentArray[index].grade = $("#updateModal .grade").val();
+  renderGradeAverage(calculateGradeAverage(studentArray));
+  updateStudentDataOnServer(studentArray[index]);
 }
 
 /**************************************************************************************************
@@ -99,9 +144,8 @@ function handleGatherDataClick() {
  * @calls clearAddStudentFormInputs, updateStudentList, postStudentDataToServer
  */
 
-
-function addStudent(){
-  if($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
+function addStudent() {
+  if ($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
     return;
   }
   var newStudentInfo = {};
@@ -119,7 +163,7 @@ function addStudent(){
  * @param {undefined} none
  */
 
-function clearAddStudentFormInputs(){
+function clearAddStudentFormInputs() {
   $("#studentName").val("");
   $("#course").val("");
   $("#studentGrade").val("");
@@ -127,22 +171,23 @@ function clearAddStudentFormInputs(){
 
 function getDataFromServer() {
   var studentInfoConfig = {
-    url: "http://s-apis.learningfuze.com/sgt/get",
-    method: "POST",
-    dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc"
+    url: "api/data.php",
+    method: "GET",
+    data: {
+      action: "readAll"
     },
+    dataType: "json",
     success: function(result) {
+      studentArray = [];
+      $("tbody").empty();
       var studentData = result.data;
-      for(var i = 0; i < studentData.length; i++) {
+      for (var i = 0; i < studentData.length; i++) {
         studentArray.push(studentData[i]);
         updateStudentList(studentData[i]);
       }
     },
-    error: function(errorResult) {
-      var result = errorResult;
-      var errorMessage = "Error Status: " + errorResult.status + ". " + errorResult.statusText;
+    error: function(error) {
+      var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
       $(".modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
@@ -152,32 +197,22 @@ function getDataFromServer() {
 
 function postStudentDataToServer(student) {
   var serverConfiguration = {
-    url: "http://s-apis.learningfuze.com/sgt/create",
-    method: "POST",
+    url: "api/data.php",
+    method: "GET",
+    data: {
+      action: "insert",
+      name: student.name,
+      course: student.course,
+      grade: student.grade
+    },
     dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc",
-      "name": student.name,
-      "course": student.course,
-      "grade": student.grade,
-    },
     success: function(result) {
-      var successResult = result;
-      if(!result.success) {
-        var errorMessage = successResult.errors.join(". ");
-        $(".modal-body h1").text("Error: " + errorMessage);
-        $("#errorModal").modal("show");
-        console.log(result.errors);
-      } else {
-          console.log(result.success);
-          var studentIDNumber = successResult.new_id;
-          studentArray[studentArray.length-1].id = studentIDNumber;
-        }
+      studentArray[studentArray.length - 1].id = result.id;
+      getDataFromServer();
     },
-    error: function(errorResult) {
-      var result = errorResult;
-      var errorMessage = "Error Status: " + errorResult.status + ". " + errorResult.statusText;
-      $(".modal-body h1").text(errorMessage);
+    error: function(error) {
+      var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
+      $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
   }
@@ -186,61 +221,96 @@ function postStudentDataToServer(student) {
 
 function deleteStudentDataOnServer(selectedStudent) {
   var serverConfiguration = {
-    url: "http://s-apis.learningfuze.com/sgt/delete",
-    method: "POST",
+    url: "api/data.php",
+    method: "GET",
     dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc",
-      "student_id": selectedStudent.id
+    data: {
+      action: "delete",
+      id: selectedStudent.id
     },
-    success: function(successResult) {
-      var result = successResult;
-      if(!result.success) {
-        $(".modal-body h1").text("Error: " + result.errors);
-        console.log(result.errors);
-        $("#errorModal").modal("show");
-        return;
-      } console.log(result.success)
+    success: function(result) {
+      getDataFromServer();
     },
-    error: function(errorResult) {
-      var result = errorResult;
-      var errorMessage = "Error Status: " + errorResult.status + ". " + errorResult.statusText;
-      $(".modal-body h1").text(errorMessage);
+    error: function(error) {
+      var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
+      $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
   }
   $.ajax(serverConfiguration);
 }
 
-function renderStudentOnDom(studentObj){
+function updateStudentDataOnServer(student) {
+  var serverConfiguration = {
+    url: "api/data.php",
+    method: "GET",
+    dataType: "json",
+    data: {
+      action: "update",
+      name: student.name,
+      course: student.course,
+      grade: student.grade,
+      id: student.id
+    },
+    success: function(result) {
+      getDataFromServer();
+    },
+    error: function(error) {
+      var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
+      $("#errorModal .modal-body h1").text(errorMessage);
+      $("#errorModal").modal("show");
+    }
+  }
+  $.ajax(serverConfiguration);
+}
+
+function renderStudentOnDom(studentObj) {
   $("<tr>").appendTo("tbody");
 
   var lastRowCreated = $("tbody tr:last-child");
-  var newStudentName = $("<td>" + studentObj.name + "</td>");
-  var newStudentCourse = $("<td>" + studentObj.course + "</td>");
-  var newStudentGrade = $("<td>" + studentObj.grade + "</td>");
-  var deleteButton = $("<td><button class='btn btn-danger'>" + "Delete" + "</button></td>");
 
-  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, deleteButton);
+  var newStudentName = $("<td>", {text: studentObj.name});
+
+  var newStudentCourse = $("<td>", {text: studentObj.course});
+
+  var newStudentGrade = $("<td>", {text: studentObj.grade});
+
+  var tableButton1 = $("<td>");
+
+  var deleteButton = $("<button>", {
+    class: "btn btn-danger",
+    text: "Delete"
+  });
+
+  var tableButton2 = $("<td>");
+
+  var updateButton = $("<button>", {
+    class: "btn btn-warning",
+    text: "Update"
+  });
+
+  tableButton1.append(updateButton);
+  tableButton2.append(deleteButton);
+  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
 }
 
-function updateStudentList(students){
+function updateStudentList(students) {
   renderStudentOnDom(students);
   renderGradeAverage(calculateGradeAverage(studentArray));
 }
 
-function calculateGradeAverage(arrayStudents){
-  if(arrayStudents.length === 0) {
+function calculateGradeAverage(arrayStudents) {
+  if (arrayStudents.length === 0) {
     return 0;
   }
   var averageTotalGrade = 0;
-  for(var i = 0; i < arrayStudents.length; i++) {
+  for (var i = 0; i < arrayStudents.length; i++) {
     averageTotalGrade += parseFloat(arrayStudents[i].grade);
   }
- averageTotalGrade = (averageTotalGrade / arrayStudents.length).toFixed(0);
- return averageTotalGrade;
+  averageTotalGrade = (averageTotalGrade / arrayStudents.length).toFixed(0);
+  return averageTotalGrade;
 }
 
-function renderGradeAverage(averageNumber){
+function renderGradeAverage(averageNumber) {
   $(".label-default").text(averageNumber);
 }
