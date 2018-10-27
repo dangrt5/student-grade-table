@@ -96,7 +96,7 @@ function handleUpdateClick() {
 
   $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
   $("#updateModal #studentName").attr("value", currentStudent.name);
-  $("#updateModal #course").attr("value", currentStudent.course_name);
+  $("#updateModal #course").attr("value", currentStudent.course);
   $("#updateModal #studentGrade").attr("value", currentStudent.grade);
 
   $("#updateModal").modal("show")
@@ -156,7 +156,7 @@ function getDataFromServer() {
     },
     dataType: "json",
     success: function(result) {
-      console.log("Result", result);
+      $("tbody").empty();
       var studentData = result.data;
       for(var i = 0; i < studentData.length; i++) {
         studentArray.push(studentData[i]);
@@ -175,31 +175,28 @@ function getDataFromServer() {
 
 function postStudentDataToServer(student) {
   var serverConfiguration = {
-    url: "http://s-apis.learningfuze.com/sgt/create",
-    method: "POST",
-    dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc",
-      "name": student.name,
-      "course": student.course,
-      "grade": student.grade,
+    url: "api/data.php",
+    method: "GET",
+    data: {
+      action: "insert",
+      name : student.name,
+      course : student.course,
+      grade : student.grade,
     },
+    dataType: "json",
     success: function(result) {
-      var successResult = result;
       if(!result.success) {
-        var errorMessage = successResult.errors.join(". ");
+        var errorMessage = result.errors.join(". ");
         $(".modal-body h1").text("Error: " + errorMessage);
         $("#errorModal").modal("show");
-        console.log(result.errors);
       } else {
-          console.log(result.success);
-          var studentIDNumber = successResult.new_id;
+          var studentIDNumber = result.id;
           studentArray[studentArray.length-1].id = studentIDNumber;
+          getDataFromServer();
         }
     },
-    error: function(errorResult) {
-      var result = errorResult;
-      var errorMessage = "Error Status: " + errorResult.status + ". " + errorResult.statusText;
+    error: function(error) {
+      var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
       $(".modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
@@ -220,7 +217,6 @@ function deleteStudentDataOnServer(selectedStudent) {
       var result = successResult;
       if(!result.success) {
         $(".modal-body h1").text("Error: " + result.errors);
-        console.log(result.errors);
         $("#errorModal").modal("show");
         return;
       } console.log(result.success)
@@ -245,7 +241,7 @@ function renderStudentOnDom(studentObj){
   });
 
   var newStudentCourse = $("<td>", {
-    text: studentObj.course_name
+    text: studentObj.course
   });
 
   var newStudentGrade = $("<td>", {
@@ -268,8 +264,8 @@ function renderStudentOnDom(studentObj){
 
   var studentOptions = $("<td>");
 
-  tableButton1.append(deleteButton);
-  tableButton2.append(updateButton);
+  tableButton1.append(updateButton);
+  tableButton2.append(deleteButton);
   lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
 }
 
