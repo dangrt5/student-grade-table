@@ -94,9 +94,10 @@ function handleUpdateClick() {
   var thisRowIndex = thisUpdateButton.closest("tr").index();
   var currentStudent = studentArray[thisRowIndex];
 
-  $(".update-student #studentName").attr("value", currentStudent.name);
-  $(".update-student #course").attr("value", currentStudent.course);
-  $(".update-student #studentGrade").attr("value", currentStudent.grade);
+  $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
+  $("#updateModal #studentName").attr("value", currentStudent.name);
+  $("#updateModal #course").attr("value", currentStudent.course_name);
+  $("#updateModal #studentGrade").attr("value", currentStudent.grade);
 
   $("#updateModal").modal("show")
 
@@ -148,13 +149,14 @@ function clearAddStudentFormInputs(){
 
 function getDataFromServer() {
   var studentInfoConfig = {
-    url: "http://s-apis.learningfuze.com/sgt/get",
-    method: "POST",
-    dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc"
+    url: "api/data.php",
+    method: "GET",
+    data: {
+      action: "readAll"
     },
+    dataType: "json",
     success: function(result) {
+      console.log("Result", result);
       var studentData = result.data;
       for(var i = 0; i < studentData.length; i++) {
         studentArray.push(studentData[i]);
@@ -162,7 +164,7 @@ function getDataFromServer() {
       }
     },
     error: function(errorResult) {
-      var result = errorResult;
+      console.log("error result", errorResult);
       var errorMessage = "Error Status: " + errorResult.status + ". " + errorResult.statusText;
       $(".modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
@@ -243,7 +245,7 @@ function renderStudentOnDom(studentObj){
   });
 
   var newStudentCourse = $("<td>", {
-    text: studentObj.course
+    text: studentObj.course_name
   });
 
   var newStudentGrade = $("<td>", {
