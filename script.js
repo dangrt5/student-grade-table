@@ -30,7 +30,7 @@ function initializeApp(){
 /***************************************************************************************************
 * addClickHandlerstoElements
 * @param {undefined}
-* @returns  {undefined}
+* @returns {undefined}
 * single function that contains all of the event handlers
 */
 
@@ -39,14 +39,12 @@ function addClickHandlersToElements(){
   handleCancelClick();
   $("tbody").on("click", "td .btn-danger", handleDeleteClick);
   $("tbody").on("click", "td .btn-warning", handleUpdateClick);
-  handleGatherDataClick();
 }
 
 /***************************************************************************************************
  * handleAddClicked - Event Handler when user clicks the add button
  * @param {object} event  The event object from the click
- * @return:
-       none
+ * @return {none}
  */
 
 function handleAddClicked(){
@@ -55,8 +53,8 @@ function handleAddClicked(){
 
 /***************************************************************************************************
  * handleCancelClicked - Event Handler when user clicks the cancel button, should clear out student form
- * @param: {undefined} none
- * @returns: {undefined} none
+ * @param {undefined} none
+ * @returns {undefined} none
  * @calls: clearAddStudentFormInputs
  */
 
@@ -66,20 +64,39 @@ function handleCancelClick(){
 }
 
 /***************************************************************************************************
- * handleDeleteClicked - Event Handler when user clicks the delete button, should remove the selected student from the grade table
- * @param: {undefined} none
- * @returns: {undefined} none
- * @calls: rednerGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
+ * handleDeleteClicked - Event Handler when user clicks the delete button, should open the confirmation modal
+ * @param {undefined} none
+ * @returns {undefined}
+ * @calls {none}
  */
 
 function handleDeleteClick() {
   var thisDeleteButton = $(this);
   var thisRowIndex = $(this).closest("tr").index();
   var currentStudent = studentArray[thisRowIndex];
-  studentArray.splice(thisRowIndex, 1)
-  $(this).closest("tr").remove();
+
+  $("#deleteModal .modal-title").text(`Confirm Delete: ${currentStudent.name}`);
+  $("#deleteModal #studentName").val(currentStudent.name);
+  $("#deleteModal #course").val(currentStudent.course);
+  $("#deleteModal #studentGrade").val(currentStudent.grade);
+  $("#deleteModal .btn-success").click(() => confirmDeleteClick(currentStudent, thisDeleteButton, thisRowIndex));
+  $("#deleteModal").modal("show");
+
+}
+
+/**************************************************************************************************
+ * confirmDeleteClick - Event Handler when user clicks the confirm button, should remove the selected student from the grade table
+ * @param: student, row
+ * @returns: {undefined} none
+ * @calls: renderGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
+ */
+
+function confirmDeleteClick(student, row, index) {
+  studentArray.splice(index, 1);
+  row.closest("tr").remove();
   renderGradeAverage(calculateGradeAverage(studentArray));
-  deleteStudentDataOnServer(currentStudent)
+  deleteStudentDataOnServer(student);
+  getDataFromServer();
 }
 
 /**************************************************************************************************
@@ -101,17 +118,6 @@ function handleUpdateClick() {
 
   $("#updateModal").modal("show")
 
-}
-
-/**************************************************************************************************
- * handleGatherDataClick - Event Handler when user clicks the Get Student Data button, should retrieve student information from the server.
- * @param: {undefined} none
- * @returns: {undefined} none
- * @calls: getDataFromServer
- */
-
-function handleGatherDataClick() {
-  $(".btn-info").click(getDataFromServer);
 }
 
 /**************************************************************************************************
@@ -206,18 +212,18 @@ function postStudentDataToServer(student) {
 
 function deleteStudentDataOnServer(selectedStudent) {
   var serverConfiguration = {
-    url: "http://s-apis.learningfuze.com/sgt/delete",
-    method: "POST",
+    url: "api/data.php",
+    method: "GET",
     dataType: "json",
-    "data": {
-      "api_key": "nvSIsRsYCc",
-      "student_id": selectedStudent.id
+    data: {
+      action: "delete",
+      id: selectedStudent.id
     },
     success: function(successResult) {
-      var result = successResult;
       if(!result.success) {
         $(".modal-body h1").text("Error: " + result.errors);
         $("#errorModal").modal("show");
+        getDataFromServer();
         return;
       } console.log(result.success)
     },
