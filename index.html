@@ -13,20 +13,20 @@
 
   <div class="container">
 
-    <div class="col-sm-8 col-lg-12">
+    <div class="col-sm-8 col-md-12">
         <!-- only show this element when it isn't on mobile -->
-        <h1 class="visible-sm visible-md visible-lg">Student Grade Table
+        <h1 class="visible-md visible-lg">Student Grade Table
             <small class="pull-right">Grade Average : <span class="label label-default">0</span></small>
             <hr/></hr/>
         </h1>
         <!-- only show this element when the user gets to a mobile version -->
-        <h3 class="visible-xs">Student Grade Table
+        <h3 class="visible-xs visible-sm">Student Grade Table
             <small class="col-xs-12 text-right">Grade Average : <span class="label label-default">0</span></small>
             <hr/></hr/>
         </h3>
     </div>
 
-    <div class="col-sm-8 col-lg-4 col-lg-push-8">
+    <div class="col-sm-8 col-md-4 col-md-push-8">
       <h4>Add Student</h4>
 
       <div class="form-group input-group">
@@ -50,12 +50,15 @@
         <input type="text" class="form-control grade" name="studentGrade" placeholder="Student Grade">
       </div>
 
-      <button type="button add-button" class="btn btn-success">Add</button>
-      <button type="button clear-button" class="btn btn-default">Cancel</button>
+      <button type="button" class="btn btn-success add-button">
+        Add
+        <i class="fa fa-spinner fa-spin"></i>
+      </button>
+      <button type="button" class="btn btn-default clear-button">Cancel</button>
 
     </div>
 
-    <div class="col-sm-8 col-lg-8 col-lg-pull-4">
+    <div class="col-sm-8 col-md-8 col-md-pull-4">
         <table class="table table-hover">
             <thead>
             <tr>
