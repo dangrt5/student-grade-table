@@ -24,6 +24,12 @@ var studentArray = [];
 function initializeApp() {
   addClickHandlersToElements();
   getDataFromServer();
+  $(document).ajaxStart(function() {
+    $(".fa-spin").show();
+  });
+  $(document).ajaxComplete(function() {
+    $(".fa-spin").hide();
+  });
 }
 
 /***************************************************************************************************
@@ -111,13 +117,10 @@ function handleUpdateClick() {
   var currentStudent = studentArray[thisRowIndex];
 
   $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
-  $("#updateModal .student-name").attr("value", currentStudent.name);
-  $("#updateModal .course").attr("value", currentStudent.course);
-  $("#updateModal .grade").attr("value", currentStudent.grade);
-
-  $(".update-button").off();
+  $("#updateModal .student-name").val(currentStudent.name);
+  $("#updateModal .course").val(currentStudent.course);
+  $("#updateModal .grade").val(currentStudent.grade);
   $(".update-button").click(() => confirmUpdateClick(currentStudent, thisRowIndex));
-
   $("#updateModal").modal("show")
 
 }
@@ -145,13 +148,13 @@ function confirmUpdateClick(student, index) {
  */
 
 function addStudent() {
-  if ($("#studentName").val() === "" || $("#course").val() === "" || $("#studentGrade").val() === "") {
+  if ($(".student-name").val() === "" || $(".course").val() === "" || $(".grade").val() === "") {
     return;
   }
   var newStudentInfo = {};
-  newStudentInfo.name = $("#studentName").val();
-  newStudentInfo.course = $("#course").val();
-  newStudentInfo.grade = $("#studentGrade").val();
+  newStudentInfo.name = $(".student-name").val();
+  newStudentInfo.course = $(".course").val();
+  newStudentInfo.grade = $(".grade").val();
   studentArray.push(newStudentInfo);
   clearAddStudentFormInputs();
   updateStudentList(newStudentInfo);
@@ -164,9 +167,9 @@ function addStudent() {
  */
 
 function clearAddStudentFormInputs() {
-  $("#studentName").val("");
-  $("#course").val("");
-  $("#studentGrade").val("");
+  $(".student-name").val("");
+  $(".course").val("");
+  $(".grade").val("");
 }
 
 function getDataFromServer() {
@@ -207,10 +210,12 @@ function postStudentDataToServer(student) {
     },
     dataType: "json",
     success: function(result) {
+      console.log("Result", result);
       studentArray[studentArray.length - 1].id = result.id;
       getDataFromServer();
     },
     error: function(error) {
+      console.log("Error", error);
       var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
       $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
@@ -265,28 +270,21 @@ function updateStudentDataOnServer(student) {
 }
 
 function renderStudentOnDom(studentObj) {
+  console.log("Student Info", studentObj);
   $("<tr>").appendTo("tbody");
-
   var lastRowCreated = $("tbody tr:last-child");
-
   var newStudentName = $("<td>", {text: studentObj.name});
-
   var newStudentCourse = $("<td>", {text: studentObj.course});
-
   var newStudentGrade = $("<td>", {text: studentObj.grade});
-
   var tableButton1 = $("<td>");
-
   var deleteButton = $("<button>", {
     class: "btn btn-danger",
-    text: "Delete"
+    text: "Delete",
   });
-
   var tableButton2 = $("<td>");
-
   var updateButton = $("<button>", {
     class: "btn btn-warning",
-    text: "Update"
+    text: "Update",
   });
 
   tableButton1.append(updateButton);
