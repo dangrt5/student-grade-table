@@ -120,8 +120,8 @@ function handleUpdateClick() {
   $("#updateModal .student-name").val(currentStudent.name);
   $("#updateModal .course").val(currentStudent.course);
   $("#updateModal .grade").val(currentStudent.grade);
-  $(".update-button").click(() => confirmUpdateClick(currentStudent, thisRowIndex));
-  $("#updateModal").modal("show")
+  $(".update-button").click(() => confirmUpdateClick(thisRowIndex));
+  $("#updateModal").modal("show");
 
 }
 
@@ -132,7 +132,7 @@ function handleUpdateClick() {
  * @calls: renderGradeAverage, calculateGradeAverage, deleteStudentDataOnServer
  */
 
-function confirmUpdateClick(student, index) {
+function confirmUpdateClick(index) {
   studentArray[index].name = $("#updateModal .student-name").val();
   studentArray[index].course = $("#updateModal .course").val();
   studentArray[index].grade = $("#updateModal .grade").val();
@@ -194,7 +194,7 @@ function getDataFromServer() {
       $(".modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
-  }
+  };
   $.ajax(studentInfoConfig);
 }
 
@@ -220,9 +220,9 @@ function postStudentDataToServer(student) {
       $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
-  }
+  };
   $.ajax(serverConfiguration);
-};
+}
 
 function deleteStudentDataOnServer(selectedStudent) {
   var serverConfiguration = {
@@ -233,7 +233,7 @@ function deleteStudentDataOnServer(selectedStudent) {
       action: "delete",
       id: selectedStudent.id
     },
-    success: function(result) {
+    success: function() {
       getDataFromServer();
     },
     error: function(error) {
@@ -241,7 +241,7 @@ function deleteStudentDataOnServer(selectedStudent) {
       $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
-  }
+  };
   $.ajax(serverConfiguration);
 }
 
@@ -257,7 +257,7 @@ function updateStudentDataOnServer(student) {
       grade: student.grade,
       id: student.id
     },
-    success: function(result) {
+    success: function() {
       getDataFromServer();
     },
     error: function(error) {
@@ -265,7 +265,7 @@ function updateStudentDataOnServer(student) {
       $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
     }
-  }
+  };
   $.ajax(serverConfiguration);
 }
 
