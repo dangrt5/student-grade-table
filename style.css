@@ -5,3 +5,7 @@
 .modal-body h1 {
   text-align: center;
 }
+
+.container .table > tbody > tr > td {
+  padding: 8px 2px;
+}
