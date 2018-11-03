@@ -155,10 +155,8 @@ function addStudent() {
   newStudentInfo.name = $(".student-name").val();
   newStudentInfo.course = $(".course").val();
   newStudentInfo.grade = $(".grade").val();
-  studentArray.push(newStudentInfo);
-  clearAddStudentFormInputs();
-  updateStudentList(newStudentInfo);
-  postStudentDataToServer(newStudentInfo);
+
+  validateForm(newStudentInfo);
 }
 
 /**************************************************************************************************
@@ -170,6 +168,10 @@ function clearAddStudentFormInputs() {
   $(".student-name").val("");
   $(".course").val("");
   $(".grade").val("");
+
+  $(".invalid-name").css("display", "none");
+  $(".invalid-course").css("display", "none");
+  $(".invalid-grade").css("display", "none");
 }
 
 function getDataFromServer() {
@@ -210,12 +212,10 @@ function postStudentDataToServer(student) {
     },
     dataType: "json",
     success: function(result) {
-      console.log("Result", result);
       studentArray[studentArray.length - 1].id = result.id;
       getDataFromServer();
     },
     error: function(error) {
-      console.log("Error", error);
       var errorMessage = "Error Status: " + error.status + ". " + error.statusText;
       $("#errorModal .modal-body h1").text(errorMessage);
       $("#errorModal").modal("show");
@@ -270,7 +270,6 @@ function updateStudentDataOnServer(student) {
 }
 
 function renderStudentOnDom(studentObj) {
-  console.log("Student Info", studentObj);
   $("<tr>").appendTo("tbody");
   var lastRowCreated = $("tbody tr:last-child");
   var newStudentName = $("<td>", {text: studentObj.name});
@@ -311,4 +310,45 @@ function calculateGradeAverage(arrayStudents) {
 
 function renderGradeAverage(averageNumber) {
   $(".label-default").text(averageNumber);
+}
+
+function validateForm(student) {
+  var validName = /^[a-zA-Z]+$/;
+  var validCourse = /^[a-zA-Z]+[0-9]{0,3}$/;
+  var validGrade = /[0-9]{1,2}/;
+  var validationCheck = {
+    name: true,
+    course: true,
+    grade: true
+  };
+
+  if(!student.name.match(validName)) {
+    $(".invalid-name").css("display", "block");
+    validationCheck.name = false;
+  } else {
+      $(".invalid-name").css("display", "none");
+  }
+
+  if(!student.course.match(validCourse)) {
+    $(".invalid-course").css("display", "block");
+    validationCheck.course = false;
+  } else {
+      $(".invalid-course").css("display", "none");
+  }
+
+  if(!student.grade.match(validGrade)) {
+    $(".invalid-grade").css("display", "block");
+    validationCheck.grade = false;
+  } else {
+      $(".invalid-grade").css("display", "none");
+  }
+
+  
+
+  if(validationCheck.name && validationCheck.course && validationCheck.grade) {
+    studentArray.push(student);
+    clearAddStudentFormInputs();
+    updateStudentList(student);
+    postStudentDataToServer(student);
+  }
 }
