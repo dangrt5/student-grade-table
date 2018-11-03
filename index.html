@@ -26,7 +26,7 @@
         </h3>
     </div>
 
-    <div class="col-sm-8 col-md-4 col-md-push-8">
+    <div class="col-sm-12 col-md-4 col-md-push-8">
       <h4>Add Student</h4>
 
       <div class="form-group input-group">
@@ -35,6 +35,7 @@
         </span>
         <input type="text" class="form-control student-name" name="studentName" placeholder="Student Name">
       </div>
+      <p class="invalid-name">Enter a valid name</p>
 
       <div class="form-group input-group">
         <span class="input-group-addon">
@@ -42,6 +43,7 @@
         </span>
         <input type="text" class="form-control course" name="course" placeholder="Student Course">
       </div>
+      <p class="invalid-course">Enter a valid student course only containing letters</p>
 
       <div class="form-group input-group">
         <span class="input-group-addon">
@@ -49,6 +51,7 @@
         </span>
         <input type="text" class="form-control grade" name="studentGrade" placeholder="Student Grade">
       </div>
+      <p class="invalid-grade">Enter a valid grade from 0-99</p>
 
       <button type="button" class="btn btn-success add-button">
         Add
@@ -58,7 +61,7 @@
 
     </div>
 
-    <div class="col-sm-8 col-md-8 col-md-pull-4">
+    <div class="col-sm-12 col-md-8 col-md-pull-4">
         <table class="table table-hover">
             <thead>
             <tr>

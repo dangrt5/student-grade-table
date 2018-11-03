@@ -9,3 +9,13 @@
 .container .table > tbody > tr > td {
   padding: 8px 2px;
 }
+
+.invalid-name, .invalid-course, .invalid-grade {
+  display: none;
+  color: red;
+}
+
+.container > div:nth-of-type(3) {
+  overflow: auto;
+}
+
