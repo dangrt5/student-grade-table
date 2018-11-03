@@ -313,9 +313,9 @@ function renderGradeAverage(averageNumber) {
 }
 
 function validateForm(student) {
-  var validName = /^[a-zA-Z]+$/;
-  var validCourse = /^[a-zA-Z]+[0-9]{0,3}$/;
-  var validGrade = /[0-9]{1,2}/;
+  var validName = /^[a-zA-Z]{2,}$/;
+  var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
+  var validGrade = /^[0-9]{1,3}$/;
   var validationCheck = {
     name: true,
     course: true,
@@ -342,8 +342,6 @@ function validateForm(student) {
   } else {
       $(".invalid-grade").css("display", "none");
   }
-
-  
 
   if(validationCheck.name && validationCheck.course && validationCheck.grade) {
     studentArray.push(student);
