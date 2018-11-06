@@ -120,6 +120,7 @@ function handleUpdateClick() {
   $("#updateModal .student-name").val(currentStudent.name);
   $("#updateModal .course").val(currentStudent.course);
   $("#updateModal .grade").val(currentStudent.grade);
+  $(".update-button").off();
   $(".update-button").click(() => confirmUpdateClick(thisRowIndex));
   $("#updateModal").modal("show");
 
