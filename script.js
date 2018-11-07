@@ -314,7 +314,7 @@ function renderGradeAverage(averageNumber) {
 }
 
 function validateForm(student) {
-  var validName = /^[a-zA-Z]{2,}$/;
+  var validName = /^[a-zA-Z]*\.? ?[a-zA-Z]*\.?$/;
   var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
   var validGrade = /^[0-9]{1,3}$/;
   var validationCheck = {
