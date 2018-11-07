@@ -5,7 +5,7 @@ An academic content management system that gives the user the ability to create,
 ## Features
 
 - CRUD
-- RESTFUL API
+- REST API
 - Form Validation
 
 ## Technologies
