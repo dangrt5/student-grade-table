@@ -334,7 +334,7 @@ function validateForm(student) {
       validationCheck.course = false;
   }
 
-  if(isNaN(student.grade)) {
+  if(!isNaN(student.grade)) {
     $(".invalid-grade").css("display", "none");
   } else {
       $(".invalid-grade").css("display", "block");
