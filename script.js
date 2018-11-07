@@ -312,6 +312,8 @@ function renderGradeAverage(averageNumber) {
 function validateForm(student) {
   var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
   var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
+  var validGrade = /^[0-9]{1,3}$/;
+
   var validationCheck = {
     name: true,
     course: true,
@@ -334,7 +336,7 @@ function validateForm(student) {
       validationCheck.course = false;
   }
 
-  if(!isNaN(student.grade)) {
+  if(validGrade.test(student.grade)) {
     $(".invalid-grade").css("display", "none");
   } else {
       $(".invalid-grade").css("display", "block");
