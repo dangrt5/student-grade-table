@@ -149,14 +149,10 @@ function confirmUpdateClick(index) {
  */
 
 function addStudent() {
-  if ($(".student-name").val() === "" || $(".course").val() === "" || $(".grade").val() === "") {
-    return;
-  }
   var newStudentInfo = {};
-  newStudentInfo.name = $(".student-name").val();
-  newStudentInfo.course = $(".course").val();
-  newStudentInfo.grade = $(".grade").val();
-
+  newStudentInfo.name = $(".student-name").val().trim();
+  newStudentInfo.course = $(".course").val().trim();
+  newStudentInfo.grade = $(".grade").val().trim();
   validateForm(newStudentInfo);
 }
 
@@ -314,34 +310,35 @@ function renderGradeAverage(averageNumber) {
 }
 
 function validateForm(student) {
-  var validName = /^[a-zA-Z]*\.? ?[a-zA-Z]*\.?$/;
+  var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
   var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
-  var validGrade = /^[0-9]{1,3}$/;
   var validationCheck = {
     name: true,
     course: true,
     grade: true
   };
 
-  if(!student.name.match(validName)) {
-    $(".invalid-name").css("display", "block");
-    validationCheck.name = false;
+  console.log("student info", student);
+
+  if(validName.test(student.name)) {
+    $(".invalid-name").css("display", "none");
   } else {
-      $(".invalid-name").css("display", "none");
+      $(".invalid-name").css("display", "block");
+      validationCheck.name = false;
   }
 
-  if(!student.course.match(validCourse)) {
-    $(".invalid-course").css("display", "block");
-    validationCheck.course = false;
+  if(validCourse.test(student.course)) {
+    $(".invalid-course").css("display", "none");
   } else {
-      $(".invalid-course").css("display", "none");
+      $(".invalid-course").css("display", "block");
+      validationCheck.course = false;
   }
 
-  if(!student.grade.match(validGrade)) {
-    $(".invalid-grade").css("display", "block");
-    validationCheck.grade = false;
+  if(isNaN(student.grade)) {
+    $(".invalid-grade").css("display", "none");
   } else {
-      $(".invalid-grade").css("display", "none");
+      $(".invalid-grade").css("display", "block");
+      validationCheck.grade = false;
   }
 
   if(validationCheck.name && validationCheck.course && validationCheck.grade) {
