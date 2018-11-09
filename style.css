@@ -15,7 +15,20 @@
   color: red;
 }
 
-.container > div:nth-of-type(3) {
-  overflow: auto;
+.table td .btn-warning {
+  margin-right: 5%;
 }
+
+@media (max-width: 768px) {
+  
+  .table td .btn {
+    display: block;
+    width: 70%;
+    margin: auto;
+  }
+}
+
+/* .container > div:nth-of-type(3) {
+  overflow: auto;
+} */
 

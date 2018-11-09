@@ -267,25 +267,51 @@ function updateStudentDataOnServer(student) {
 }
 
 function renderStudentOnDom(studentObj) {
+
+  if(parseFloat(studentObj.grade) < 10) {
+    studentObj.grade = " " + studentObj.grade;
+  }
+
   $("<tr>").appendTo("tbody");
   var lastRowCreated = $("tbody tr:last-child");
   var newStudentName = $("<td>", {text: studentObj.name});
   var newStudentCourse = $("<td>", {text: studentObj.course});
   var newStudentGrade = $("<td>", {text: studentObj.grade});
-  var tableButton1 = $("<td>");
+  var tableButton1 = $("<td>").attr("colspan", "2");
   var deleteButton = $("<button>", {
-    class: "btn btn-danger",
-    text: "Delete",
-  });
-  var tableButton2 = $("<td>");
-  var updateButton = $("<button>", {
-    class: "btn btn-warning",
-    text: "Update",
+    class: "btn btn-danger"
   });
 
-  tableButton1.append(updateButton);
-  tableButton2.append(deleteButton);
-  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
+  var deleteIcon = $("<span>", {
+    class: "glyphicon glyphicon-trash visible-xs"
+  })
+
+  var deleteText = $("<span>", {
+    text: "Delete",
+    class: "visible-sm visible-md visible-lg"
+  });
+
+  // var tableButton2 = $("<td>");
+  var updateButton = $("<button>", {
+    class: "btn btn-warning",
+  });
+
+  var updateIcon = $("<span>", {
+    class: "glyphicon glyphicon-pencil visible-xs"
+  })
+
+  var updateText = $("<span>", {
+    text: "Update",
+    class: "visible-sm visible-md visible-lg"
+  });
+
+
+  deleteButton.append(deleteIcon, deleteText);
+  updateButton.append(updateIcon, updateText);
+
+  tableButton1.append(updateButton, deleteButton);
+  // tableButton2.append(deleteButton);
+  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1);
 }
 
 function updateStudentList(students) {
@@ -311,7 +337,7 @@ function renderGradeAverage(averageNumber) {
 
 function validateForm(student) {
   var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
-  var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
+  var validCourse = /^[a-zA-Z]+$/;
   var validGrade = /^[0-9]{1,3}$/;
 
   var validationCheck = {
@@ -319,8 +345,6 @@ function validateForm(student) {
     course: true,
     grade: true
   };
-
-  console.log("student info", student);
 
   if(validName.test(student.name)) {
     $(".invalid-name").css("display", "none");
