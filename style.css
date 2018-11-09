@@ -23,12 +23,18 @@
   
   .table td .btn {
     display: block;
-    width: 70%;
+    width: 75%;
     margin: auto;
+    margin-bottom: 2%
   }
 }
 
-/* .container > div:nth-of-type(3) {
-  overflow: auto;
-} */
+@media (max-width: 576px) {
+  .table tr > td:nth-of-type(3) {
+    text-align: center;
+  }
 
+  .table tr > th:nth-of-type(3) {
+    text-align: center;
+  }
+}
