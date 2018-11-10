@@ -118,10 +118,14 @@ function handleUpdateClick() {
 
   $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
   $("#updateModal .student-name").val(currentStudent.name);
-  $("#updateModal .course").val(currentStudent.course);
-  $("#updateModal .grade").val(currentStudent.grade);
+  $("#updateModal .student-course").val(currentStudent.course);
+  $("#updateModal .student-grade").val(currentStudent.grade);
+
+  validateUpdateStudent(currentStudent, thisRowIndex);
+
   $(".update-button").off();
   $(".update-button").click(() => confirmUpdateClick(thisRowIndex));
+  $("updateModal .invalid-input").hide();
   $("#updateModal").modal("show");
 
 }
@@ -134,11 +138,11 @@ function handleUpdateClick() {
  */
 
 function confirmUpdateClick(index) {
-  studentArray[index].name = $("#updateModal .student-name").val();
-  studentArray[index].course = $("#updateModal .course").val();
-  studentArray[index].grade = $("#updateModal .grade").val();
-  renderGradeAverage(calculateGradeAverage(studentArray));
-  updateStudentDataOnServer(studentArray[index]);
+  var updatedStudent = {}; //START HERE
+  updatedStudent.name = $("#updateModal .student-name").val().trim();
+  updatedStudent.course = $("#updateModal .student-course").val().trim();
+  updatedStudent.grade = $("#updateModal .student-grade").val().trim();
+  validateUpdateStudent(updatedStudent, index);
 }
 
 /**************************************************************************************************
@@ -153,7 +157,7 @@ function addStudent() {
   newStudentInfo.name = $(".student-name").val().trim();
   newStudentInfo.course = $(".course").val().trim();
   newStudentInfo.grade = $(".grade").val().trim();
-  validateForm(newStudentInfo);
+  validateAddStudent(newStudentInfo);
 }
 
 /**************************************************************************************************
@@ -267,11 +271,6 @@ function updateStudentDataOnServer(student) {
 }
 
 function renderStudentOnDom(studentObj) {
-
-  if(parseFloat(studentObj.grade) < 10) {
-    studentObj.grade = " " + studentObj.grade;
-  }
-
   $("<tr>").appendTo("tbody");
   var lastRowCreated = $("tbody tr:last-child");
   var newStudentName = $("<td>", {text: studentObj.name});
@@ -284,7 +283,7 @@ function renderStudentOnDom(studentObj) {
 
   var deleteIcon = $("<span>", {
     class: "glyphicon glyphicon-trash visible-xs"
-  })
+  });
 
   var deleteText = $("<span>", {
     text: "Delete",
@@ -298,7 +297,7 @@ function renderStudentOnDom(studentObj) {
 
   var updateIcon = $("<span>", {
     class: "glyphicon glyphicon-pencil visible-xs"
-  })
+  });
 
   var updateText = $("<span>", {
     text: "Update",
@@ -335,9 +334,9 @@ function renderGradeAverage(averageNumber) {
   $(".label-default").text(averageNumber);
 }
 
-function validateForm(student) {
+function validateAddStudent(student) {
   var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
-  var validCourse = /^[a-zA-Z]+$/;
+  var validCourse = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
   var validGrade = /^[0-9]{1,3}$/;
 
   var validationCheck = {
@@ -346,24 +345,39 @@ function validateForm(student) {
     grade: true
   };
 
-  if(validName.test(student.name)) {
-    $(".invalid-name").css("display", "none");
-  } else {
-      $(".invalid-name").css("display", "block");
-      validationCheck.name = false;
-  }
+  if(student.name.length > 20) {
+    $(".new-student .invalid-name")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.name = false;
+  } else if(validName.test(student.name)) {
+      $(".new-student .invalid-name").css("display", "none");
+    } else {
+        $(".new-student .invalid-name")
+          .text("Enter a valid name only containing letters.")
+          .css("display", "block");
+        validationCheck.name = false;
+    }
 
-  if(validCourse.test(student.course)) {
-    $(".invalid-course").css("display", "none");
+  if(student.course.length > 20) {
+    $(".new-student .invalid-course")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.course = false;
+  }
+  else if(validCourse.test(student.course)) {
+    $(".new-student .invalid-course").css("display", "none");
   } else {
-      $(".invalid-course").css("display", "block");
+      $(".new-student .invalid-course")
+        .text("Enter a valid student course only containing letters and/or a space.")
+        .css("display", "block");
       validationCheck.course = false;
   }
 
-  if(validGrade.test(student.grade)) {
-    $(".invalid-grade").css("display", "none");
+  if(validGrade.test(student.grade) && parseInt(student.grade) <= 100) {
+    $(".new-student .invalid-grade").css("display", "none");
   } else {
-      $(".invalid-grade").css("display", "block");
+      $(".new-student .invalid-grade").css("display", "block");
       validationCheck.grade = false;
   }
 
@@ -373,4 +387,60 @@ function validateForm(student) {
     updateStudentList(student);
     postStudentDataToServer(student);
   }
+}
+
+function validateUpdateStudent(student, index) {
+  var validationCheck = {
+    name: true,
+    course: true,
+    grade: true
+  };
+  var validName = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
+  var validCourse = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
+  var validGrade = /^[0-9]{1,3}$/;
+
+  if(student.name.length > 20) {
+    $("#updateModal .invalid-name")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.name = false;
+  } else if(validName.test(student.name)) {
+      $("#updateModal .invalid-name").css("display", "none");
+    } else {
+        $("#updateModal .invalid-name")
+          .text("Enter a valid name containing only letters.")
+          .css("display", "block");
+        validationCheck.name = false;
+      }
+
+  if(student.course.length > 20) {
+    $("#updateModal .invalid-course")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.course = false;
+  } else if(validCourse.test(student.course)) {
+      $("#updateModal .invalid-course").css("display", "none");
+    } else {
+        $("#updateModal .invalid-course")
+        .text("Enter a valid student course only containing letters and/or a space.")
+        .css("display", "block");
+        validationCheck.course = false;
+    }
+
+  if(validGrade.test(student.grade) && parseInt(student.grade) <= 100) {
+    $("#updateModal .invalid-grade").css("display", "none");
+  } else {
+      $("#updateModal .invalid-grade").css("display", "block");
+      validationCheck.grade = false;
+  }
+
+  if(validationCheck.name && validationCheck.course && validationCheck.grade) {
+    studentArray[index].name = student.name;
+    studentArray[index].course = student.course;
+    studentArray[index].grade = student.grade;
+    renderGradeAverage(calculateGradeAverage(studentArray));
+    updateStudentDataOnServer(studentArray[index]);
+    $("#updateModal").modal("hide");
+  }
+
 }
