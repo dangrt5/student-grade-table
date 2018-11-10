@@ -118,10 +118,14 @@ function handleUpdateClick() {
 
   $("#updateModal .modal-title").text(`Edit Student: ${currentStudent.name}?`);
   $("#updateModal .student-name").val(currentStudent.name);
-  $("#updateModal .course").val(currentStudent.course);
-  $("#updateModal .grade").val(currentStudent.grade);
+  $("#updateModal .student-course").val(currentStudent.course);
+  $("#updateModal .student-grade").val(currentStudent.grade);
+
+  validateUpdateStudent(currentStudent, thisRowIndex);
+
   $(".update-button").off();
   $(".update-button").click(() => confirmUpdateClick(thisRowIndex));
+  $("updateModal .invalid-input").hide();
   $("#updateModal").modal("show");
 
 }
@@ -134,11 +138,11 @@ function handleUpdateClick() {
  */
 
 function confirmUpdateClick(index) {
-  studentArray[index].name = $("#updateModal .student-name").val();
-  studentArray[index].course = $("#updateModal .course").val();
-  studentArray[index].grade = $("#updateModal .grade").val();
-  renderGradeAverage(calculateGradeAverage(studentArray));
-  updateStudentDataOnServer(studentArray[index]);
+  var updatedStudent = {}; //START HERE
+  updatedStudent.name = $("#updateModal .student-name").val().trim();
+  updatedStudent.course = $("#updateModal .student-course").val().trim();
+  updatedStudent.grade = $("#updateModal .student-grade").val().trim();
+  validateUpdateStudent(updatedStudent, index);
 }
 
 /**************************************************************************************************
@@ -153,7 +157,7 @@ function addStudent() {
   newStudentInfo.name = $(".student-name").val().trim();
   newStudentInfo.course = $(".course").val().trim();
   newStudentInfo.grade = $(".grade").val().trim();
-  validateForm(newStudentInfo);
+  validateAddStudent(newStudentInfo);
 }
 
 /**************************************************************************************************
@@ -272,20 +276,41 @@ function renderStudentOnDom(studentObj) {
   var newStudentName = $("<td>", {text: studentObj.name});
   var newStudentCourse = $("<td>", {text: studentObj.course});
   var newStudentGrade = $("<td>", {text: studentObj.grade});
-  var tableButton1 = $("<td>");
+  var tableButton1 = $("<td>").attr("colspan", "2");
   var deleteButton = $("<button>", {
-    class: "btn btn-danger",
-    text: "Delete",
-  });
-  var tableButton2 = $("<td>");
-  var updateButton = $("<button>", {
-    class: "btn btn-warning",
-    text: "Update",
+    class: "btn btn-danger"
   });
 
-  tableButton1.append(updateButton);
-  tableButton2.append(deleteButton);
-  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1, tableButton2);
+  var deleteIcon = $("<span>", {
+    class: "glyphicon glyphicon-trash visible-xs"
+  });
+
+  var deleteText = $("<span>", {
+    text: "Delete",
+    class: "visible-sm visible-md visible-lg"
+  });
+
+  // var tableButton2 = $("<td>");
+  var updateButton = $("<button>", {
+    class: "btn btn-warning",
+  });
+
+  var updateIcon = $("<span>", {
+    class: "glyphicon glyphicon-pencil visible-xs"
+  });
+
+  var updateText = $("<span>", {
+    text: "Update",
+    class: "visible-sm visible-md visible-lg"
+  });
+
+
+  deleteButton.append(deleteIcon, deleteText);
+  updateButton.append(updateIcon, updateText);
+
+  tableButton1.append(updateButton, deleteButton);
+  // tableButton2.append(deleteButton);
+  lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1);
 }
 
 function updateStudentList(students) {
@@ -309,9 +334,9 @@ function renderGradeAverage(averageNumber) {
   $(".label-default").text(averageNumber);
 }
 
-function validateForm(student) {
-  var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
-  var validCourse = /^[a-zA-Z]+ ?[0-9]{0,3}$/;
+function validateAddStudent(student) {
+  var validName = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
+  var validCourse = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
   var validGrade = /^[0-9]{1,3}$/;
 
   var validationCheck = {
@@ -320,26 +345,39 @@ function validateForm(student) {
     grade: true
   };
 
-  console.log("student info", student);
+  if(student.name.length > 20) {
+    $(".new-student .invalid-name")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.name = false;
+  } else if(validName.test(student.name)) {
+      $(".new-student .invalid-name").css("display", "none");
+    } else {
+        $(".new-student .invalid-name")
+          .text("Enter a valid first and/or last name.")
+          .css("display", "block");
+        validationCheck.name = false;
+    }
 
-  if(validName.test(student.name)) {
-    $(".invalid-name").css("display", "none");
-  } else {
-      $(".invalid-name").css("display", "block");
-      validationCheck.name = false;
+  if(student.course.length > 20) {
+    $(".new-student .invalid-course")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.course = false;
   }
-
-  if(validCourse.test(student.course)) {
-    $(".invalid-course").css("display", "none");
+  else if(validCourse.test(student.course)) {
+    $(".new-student .invalid-course").css("display", "none");
   } else {
-      $(".invalid-course").css("display", "block");
+      $(".new-student .invalid-course")
+        .text("Enter a valid student course only containing letters and/or a space.")
+        .css("display", "block");
       validationCheck.course = false;
   }
 
-  if(validGrade.test(student.grade)) {
-    $(".invalid-grade").css("display", "none");
+  if(validGrade.test(student.grade) && parseInt(student.grade) <= 100) {
+    $(".new-student .invalid-grade").css("display", "none");
   } else {
-      $(".invalid-grade").css("display", "block");
+      $(".new-student .invalid-grade").css("display", "block");
       validationCheck.grade = false;
   }
 
@@ -349,4 +387,60 @@ function validateForm(student) {
     updateStudentList(student);
     postStudentDataToServer(student);
   }
+}
+
+function validateUpdateStudent(student, index) {
+  var validationCheck = {
+    name: true,
+    course: true,
+    grade: true
+  };
+  var validName = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
+  var validCourse = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
+  var validGrade = /^[0-9]{1,3}$/;
+
+  if(student.name.length > 20) {
+    $("#updateModal .invalid-name")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.name = false;
+  } else if(validName.test(student.name)) {
+      $("#updateModal .invalid-name").css("display", "none");
+    } else {
+        $("#updateModal .invalid-name")
+          .text("Enter a valid first and/or last name.")
+          .css("display", "block");
+        validationCheck.name = false;
+      }
+
+  if(student.course.length > 20) {
+    $("#updateModal .invalid-course")
+      .text("The maximum characters for this field is 20.")
+      .css("display", "block");
+    validationCheck.course = false;
+  } else if(validCourse.test(student.course)) {
+      $("#updateModal .invalid-course").css("display", "none");
+    } else {
+        $("#updateModal .invalid-course")
+        .text("Enter a valid student course only containing letters and/or a space.")
+        .css("display", "block");
+        validationCheck.course = false;
+    }
+
+  if(validGrade.test(student.grade) && parseInt(student.grade) <= 100) {
+    $("#updateModal .invalid-grade").css("display", "none");
+  } else {
+      $("#updateModal .invalid-grade").css("display", "block");
+      validationCheck.grade = false;
+  }
+
+  if(validationCheck.name && validationCheck.course && validationCheck.grade) {
+    studentArray[index].name = student.name;
+    studentArray[index].course = student.course;
+    studentArray[index].grade = student.grade;
+    renderGradeAverage(calculateGradeAverage(studentArray));
+    updateStudentDataOnServer(studentArray[index]);
+    $("#updateModal").modal("hide");
+  }
+
 }

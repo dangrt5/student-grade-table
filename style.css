@@ -10,12 +10,32 @@
   padding: 8px 2px;
 }
 
-.invalid-name, .invalid-course, .invalid-grade {
+.invalid-input {
   display: none;
   color: red;
 }
 
-.container > div:nth-of-type(3) {
-  overflow: auto;
+.table td .btn-warning {
+  margin-right: 5%;
 }
 
+
+@media (max-width: 768px) {
+  
+  .table td .btn {
+    display: block;
+    width: 75%;
+    margin: auto;
+    margin-bottom: 2%
+  }
+}
+
+@media (max-width: 576px) {
+  .table tr > td:nth-of-type(3) {
+    text-align: center;
+  }
+
+  .table tr > th:nth-of-type(3) {
+    text-align: center;
+  }
+}

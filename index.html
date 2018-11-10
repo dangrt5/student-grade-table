@@ -26,7 +26,7 @@
         </h3>
     </div>
 
-    <div class="col-sm-12 col-md-4 col-md-push-8">
+    <div class="col-sm-12 col-md-4 col-md-push-8 new-student">
       <h4>Add Student</h4>
 
       <div class="form-group input-group">
@@ -35,7 +35,7 @@
         </span>
         <input type="text" class="form-control student-name" name="studentName" placeholder="Student Name">
       </div>
-      <p class="invalid-name">Enter a valid name</p>
+      <p class="invalid-input invalid-name"></p>
 
       <div class="form-group input-group">
         <span class="input-group-addon">
@@ -43,7 +43,7 @@
         </span>
         <input type="text" class="form-control course" name="course" placeholder="Student Course">
       </div>
-      <p class="invalid-course">Enter a valid student course only containing letters</p>
+      <p class="invalid-input invalid-course"></p>
 
       <div class="form-group input-group">
         <span class="input-group-addon">
@@ -51,7 +51,7 @@
         </span>
         <input type="text" class="form-control grade" name="studentGrade" placeholder="Student Grade">
       </div>
-      <p class="invalid-grade">Enter a valid grade from 0-100</p>
+      <p class="invalid-input invalid-grade">Enter a whole number from 0 to 100</p>
 
       <button type="button" class="btn btn-success add-button">
         Add
@@ -93,24 +93,27 @@
               </span>
               <input type="text" class="form-control student-name" name="studentName" placeholder="Student Name">
             </div>
+            <p class="invalid-input invalid-name"></p>
 
             <div class="form-group input-group">
               <span class="input-group-addon">
                 <span class="glyphicon glyphicon-list-alt"></span>
               </span>
-              <input type="text" class="form-control course" name="course" placeholder="Student Course">
+              <input type="text" class="form-control student-course" name="course" placeholder="Student Course">
             </div>
+            <p class="invalid-input invalid-course"></p>
 
             <div class="form-group input-group">
               <span class="input-group-addon">
                 <span class="glyphicon glyphicon-education"></span>
               </span>
-              <input type="text" class="form-control grade" name="studentGrade" placeholder="Student Grade">
+              <input type="text" class="form-control student-grade" name="studentGrade" placeholder="Student Grade">
             </div>
+            <p class="invalid-input invalid-grade">Enter a whole number from 0 to 100</p>
 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-success update-button" data-dismiss="modal">Save</button>
+            <button type="button" class="btn btn-success update-button">Save</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
           </div>
         </div>
