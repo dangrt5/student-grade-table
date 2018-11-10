@@ -335,7 +335,7 @@ function renderGradeAverage(averageNumber) {
 }
 
 function validateAddStudent(student) {
-  var validName = /^[a-zA-Z]+\.? ?[a-zA-Z]*\.?$/;
+  var validName = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
   var validCourse = /^[a-zA-Z]+ ?[a-zA-Z]*$/;
   var validGrade = /^[0-9]{1,3}$/;
 
@@ -354,7 +354,7 @@ function validateAddStudent(student) {
       $(".new-student .invalid-name").css("display", "none");
     } else {
         $(".new-student .invalid-name")
-          .text("Enter a valid name only containing letters.")
+          .text("Enter a valid first and/or last name.")
           .css("display", "block");
         validationCheck.name = false;
     }
@@ -408,7 +408,7 @@ function validateUpdateStudent(student, index) {
       $("#updateModal .invalid-name").css("display", "none");
     } else {
         $("#updateModal .invalid-name")
-          .text("Enter a valid name containing only letters.")
+          .text("Enter a valid first and/or last name.")
           .css("display", "block");
         validationCheck.name = false;
       }
