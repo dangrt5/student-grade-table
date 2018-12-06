@@ -121,8 +121,6 @@ function handleUpdateClick() {
   $("#updateModal .student-course").val(currentStudent.course);
   $("#updateModal .student-grade").val(currentStudent.grade);
 
-  validateUpdateStudent(currentStudent, thisRowIndex);
-
   $(".update-button").off();
   $(".update-button").click(() => confirmUpdateClick(thisRowIndex));
   $("updateModal .invalid-input").hide();
@@ -275,7 +273,10 @@ function renderStudentOnDom(studentObj) {
   var lastRowCreated = $("tbody tr:last-child");
   var newStudentName = $("<td>", {text: studentObj.name});
   var newStudentCourse = $("<td>", {text: studentObj.course});
-  var newStudentGrade = $("<td>", {text: studentObj.grade});
+  var newStudentGrade = $("<td>", {
+    text: studentObj.grade < 10 ? "0" + studentObj.grade : studentObj.grade
+  });
+  
   var tableButton1 = $("<td>").attr("colspan", "2");
   var deleteButton = $("<button>", {
     class: "btn btn-danger"
@@ -304,12 +305,9 @@ function renderStudentOnDom(studentObj) {
     class: "visible-sm visible-md visible-lg"
   });
 
-
   deleteButton.append(deleteIcon, deleteText);
   updateButton.append(updateIcon, updateText);
-
   tableButton1.append(updateButton, deleteButton);
-  // tableButton2.append(deleteButton);
   lastRowCreated.append(newStudentName, newStudentCourse, newStudentGrade, tableButton1);
 }
 
